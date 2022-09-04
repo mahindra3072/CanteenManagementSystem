@@ -436,8 +436,17 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			resultSet=statement.executeQuery();
 			System.out.printf("%-10s %-20s %-20s \n","Fid","Name","Price");
 			while(resultSet.next()) {
-				System.out.printf("%-10s %-20s %-20s \n",resultSet.getInt(1),resultSet.getString(2),resultSet.getDouble(3));
+				Food f=new Food(
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getDouble(3)
+				);
+				foodList.add(f);
 			}
+			for(Food food:foodList){
+				System.out.printf("%-10s %-20s %-20s \n",food.getfId(),food.getfDesc(),food.getfUnitPrice());
+			}
+			foodList.removeAll(foodList);
 			System.out.println("Enter food id");
 			int fid=scanner.nextInt();
 			sql="delete from food where fid=?";
@@ -445,7 +454,7 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement.setInt(1, fid);
 			int n=statement.executeUpdate();
 			if(n>=0)
-				System.out.println(n+" records affected");
+				System.out.println("Food item removed");
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -475,7 +484,7 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 					statement.setInt(2,fid);
 					n=statement.executeUpdate();
 					if(n>=0)
-						System.out.println(n+" records affected");
+						System.out.println("Food name modified");
 					break;
 
 				case 2:
@@ -488,7 +497,7 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 					statement.setInt(2,fid);
 					n=statement.executeUpdate();
 					if(n>=0)
-						System.out.println(n+" records affected");
+						System.out.println("Price modified");
 					break;
 
 				default:
@@ -511,9 +520,19 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement=connection.prepareStatement(sql);
 			statement.setInt(1, fid);
 			resultSet=statement.executeQuery();
+			System.out.printf("%-10s %-20s %-20s \n","Fid","Name","Price");
 			while(resultSet.next()) {
-				System.out.println(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+resultSet.getDouble(3));
+				Food f=new Food(
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getDouble(3)
+				);
+				foodList.add(f);
 			}
+			for(Food food:foodList){
+				System.out.printf("%-10s %-20s %-20s \n",food.getfId(),food.getfDesc(),food.getfUnitPrice());
+			}
+			foodList.removeAll(foodList);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -527,9 +546,19 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 		try {
 			statement=connection.prepareStatement(sql);
 			resultSet=statement.executeQuery();
+			System.out.printf("%-10s %-20s %-20s \n","Fid","Name","Price");
 			while(resultSet.next()) {
-				System.out.println(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+resultSet.getDouble(3));
+				Food f=new Food(
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getDouble(3)
+				);
+				foodList.add(f);
 			}
+			for(Food food:foodList){
+				System.out.printf("%-10s %-20s %-20s \n",food.getfId(),food.getfDesc(),food.getfUnitPrice());
+			}
+			foodList.removeAll(foodList);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
