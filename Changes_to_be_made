@@ -2,3 +2,6 @@ Add customer name when displaying orders
 Add an option to add wallet balance to customer in admin section
 Add option to add balance by admin to customer
 Fix the issue to only show the pending orders to the vendor to when completing orders
+Recreate the sql script that is deleted
+Add quantity field in table foodorders
+

@@ -75,7 +75,7 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement.setInt(1, cid);
 			int n=statement.executeUpdate();
 			if(n>=0)
-				System.out.println(n+" records affected");
+				System.out.println(n+" user removed");
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}		
@@ -103,8 +103,11 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 					statement.setString(1,name);
 					statement.setInt(2,cid);
 					n=statement.executeUpdate();
-					if(n>=0)
+					if(n>0)
 						System.out.println(n+" records affected");
+					if(n==0){
+						System.out.println("Invalid Request");
+					}
 					break;
 
 				case 2:
@@ -116,8 +119,11 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 					statement.setString(1,phone);
 					statement.setInt(2,cid);
 					n=statement.executeUpdate();
-					if(n>=0)
+					if(n>0)
 						System.out.println(n+" records affected");
+					if(n==0){
+						System.out.println("Invalid Request");
+					}
 					break;
 
 				case 3:
@@ -129,8 +135,11 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 					statement.setString(1,email);
 					statement.setInt(2,cid);
 					n=statement.executeUpdate();
-					if(n>=0)
+					if(n>0)
 						System.out.println(n+" records affected");
+					if(n==0){
+						System.out.println("Invalid Request");
+					}
 					break;
 
 				case 4:
@@ -155,7 +164,7 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 
 
 				default:
-					System.out.println("wrong option");
+					System.out.println("Invalid input");
 			}
 		}catch(SQLException e){
 			System.out.println(e.getMessage());
@@ -174,9 +183,22 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement=connection.prepareStatement(sql);
 			statement.setInt(1, cid);
 			resultSet=statement.executeQuery();
+
 			while(resultSet.next()) {
-				System.out.println(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+resultSet.getString(3)+" "+resultSet.getString(4)+" "+resultSet.getDouble(5));
+				Customer cs=new Customer(
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getString(3),
+						resultSet.getString(4),
+						resultSet.getDouble(5)
+				);
+			customerList.add(cs);
 			}
+			System.out.printf("%-10s %-10s %-20s %-30s %-10s\n","Cid","Name","Phone","Email","Balance");
+			for(Customer c:customerList){
+				System.out.printf("%-10s %-10s %-20s %-30s %-10s\n",c.getcId(),c.getcName(),c.getcPhone(),c.getcEmail(),c.getcWalletBalance());
+			}
+			customerList.removeAll(customerList);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -189,8 +211,20 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement=connection.prepareStatement(sql);
 			resultSet=statement.executeQuery();
 			while(resultSet.next()) {
-				System.out.println(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+resultSet.getString(3)+" "+resultSet.getString(4)+" "+resultSet.getDouble(5));
+				Customer cs=new Customer(
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getString(3),
+						resultSet.getString(4),
+						resultSet.getDouble(5)
+				);
+				customerList.add(cs);
 			}
+			System.out.printf("%-10s %-10s %-20s %-30s %-10s\n","Cid","Name","Phone","Email","Balance");
+			for(Customer c:customerList){
+				System.out.printf("%-10s %-10s %-20s %-30s %-10s\n",c.getcId(),c.getcName(),c.getcPhone(),c.getcEmail(),c.getcWalletBalance());
+			}
+			customerList.removeAll(customerList);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}		
@@ -200,22 +234,27 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 	public void addVendor() {
 
 		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter vendor id");
+		int vid=sc.nextInt();
 		System.out.println("Enter vendor name");
+		sc.nextLine();
 		String vname=sc.nextLine();
 		System.out.println("Enter vendor phone number");
 		String vphone=sc.nextLine();
 		System.out.println("Enter vendor email (optional)");
 		String vemail=sc.nextLine();
-		String sql="insert into vendor(vname,vphone,vemail) values(?,?,?)";
+		String sql="insert into vendor values(?,?,?,?)";
 		try{
 			statement=connection.prepareStatement(sql);
-			statement.setString(1,vname);
-			statement.setString(2,vphone);
-			statement.setString(3,vemail);
+			statement.setInt(1,vid);
+			statement.setString(2,vname);
+			statement.setString(3,vphone);
+			statement.setString(4,vemail);
 			int n=statement.executeUpdate();
 
 			if(n>0){
-				System.out.println(n+" rows affected");
+				System.out.println("Vendor Added successfully!");
+				System.out.println(vid+" is your vendor id");
 			}
 
 
@@ -237,7 +276,7 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement.setInt(1, vid);
 			int n=statement.executeUpdate();
 			if(n>=0)
-				System.out.println(n+" records affected");
+				System.out.println("Vendor removed successfully!");
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -317,8 +356,20 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement.setInt(1, vid);
 			resultSet=statement.executeQuery();
 			while(resultSet.next()) {
-				System.out.println(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+resultSet.getString(3)+" "+resultSet.getString(4));
+				Vendor vd=new Vendor(
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getString(3),
+						resultSet.getString(4)
+
+				);
+				vendorList.add(vd);
 			}
+			System.out.printf("%-10s %-20s %-20s %-10s \n","Vid","Name","Phone","Email");
+			for(Vendor v:vendorList){
+				System.out.printf("%-10s %-20s %-20s %-10s \n",v.getvId(),v.getvName(),v.getvPhone(),v.getvEmail());
+			}
+			vendorList.removeAll(vendorList);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -332,8 +383,20 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement=connection.prepareStatement(sql);
 			resultSet=statement.executeQuery();
 			while(resultSet.next()) {
-				System.out.println(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+resultSet.getString(3)+" "+resultSet.getString(4));
+				Vendor vd=new Vendor(
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getString(3),
+						resultSet.getString(4)
+
+				);
+				vendorList.add(vd);
 			}
+			System.out.printf("%-10s %-20s %-20s %-10s \n","Vid","Name","Phone","Email");
+			for(Vendor v:vendorList){
+				System.out.printf("%-10s %-20s %-20s %-10s \n",v.getvId(),v.getvName(),v.getvPhone(),v.getvEmail());
+			}
+			vendorList.removeAll(vendorList);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -355,7 +418,7 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 			statement.setDouble(2, fprice);
 			int n=statement.executeUpdate();
 			if(n>=0)
-				System.out.println(n+" records affected");
+				System.out.println("Food added  successfully!");
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -367,10 +430,17 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 	public void removeFood() {
 
 		Scanner scanner=new Scanner(System.in);
-		System.out.println("Enter food id");
-		int fid=scanner.nextInt();
-		String sql="delete from food where fid=?";
+		String sql="select * from food";
 		try {
+			statement=connection.prepareStatement(sql);
+			resultSet=statement.executeQuery();
+			System.out.printf("%-10s %-20s %-20s \n","Fid","Name","Price");
+			while(resultSet.next()) {
+				System.out.printf("%-10s %-20s %-20s \n",resultSet.getInt(1),resultSet.getString(2),resultSet.getDouble(3));
+			}
+			System.out.println("Enter food id");
+			int fid=scanner.nextInt();
+			sql="delete from food where fid=?";
 			statement=connection.prepareStatement(sql);
 			statement.setInt(1, fid);
 			int n=statement.executeUpdate();
@@ -383,7 +453,6 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 
 	@Override
 	public void editFood() {
-
 		Scanner scanner=new Scanner(System.in);
 		System.out.println("Enter food id");
 		int fid=scanner.nextInt();
@@ -483,25 +552,37 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 	  scanner.nextLine();
 	  String remark=scanner.nextLine();
 	  try{
-		  statement=connection.prepareStatement("select fid from food where fname=?");
+		  statement=connection.prepareStatement("select fid,fprice from food where fname=?");
 		  statement.setString(1,item);
 		  resultSet=statement.executeQuery();
 		  resultSet.next();
 		  int fid=resultSet.getInt(1);
-		  String sql="insert into foodorder(cid,vid,fid,orderdate,orderstatus,remark) values(?,?,?,now(),?,?)";
-		  statement=connection.prepareStatement(sql);
+		  double fprice=resultSet.getDouble(2);
+		  System.out.println("Enter the quantity of food");
+		  int quantity=scanner.nextInt();
+		  double totalamount=fprice*quantity;
+		  statement=connection.prepareStatement("select cwalletbalance from customer where cid=?");
 		  statement.setInt(1,cid);
-		  statement.setInt(2,vid);
-		  statement.setInt(3,fid);
-		  statement.setString(4,defstat);
-		  statement.setString(5,remark);
-		  int n=statement.executeUpdate();
-
-		  if(n>0){
-			  System.out.println("Order placed successfully!");
+		  resultSet=statement.executeQuery();
+		  resultSet.next();
+		  double cbalance=resultSet.getDouble(1);
+		  if(cbalance>=totalamount){
+			  String sql = "insert into foodorder(cid,vid,fid,orderdate,quantity,totalamount,orderstatus,remark) values(?,?,?,now(),?,?,?,?)";
+			  statement = connection.prepareStatement(sql);
+			  statement.setInt(1, cid);
+			  statement.setInt(2, vid);
+			  statement.setInt(3, fid);
+			  statement.setInt(4, quantity);
+			  statement.setDouble(5, totalamount);
+			  statement.setString(6, defstat);
+			  statement.setString(7, remark);
+			  int n = statement.executeUpdate();
+			  if (n > 0) {
+				  System.out.println("Order placed successfully!");
+			  }
+		  }else{
+			  System.out.println("Order cannot be placed due to insufficient balance");
 		  }
-
-
 
 	  }catch(SQLException e){
 		  System.out.println(e.getMessage());
@@ -533,13 +614,13 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 	public void viewOrdersPlaced() {
 
 
-		String sql="select  fo.orderid,f.fname,c.cname,v.vname,f.fprice ,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid;";
+		String sql="select  fo.orderid,f.fname,c.cname,v.vname,fo.quantity,fo.totalamount ,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid;";
 		try {
 			statement=connection.prepareStatement(sql);
 			resultSet=statement.executeQuery();
-			System.out.printf("%-10s %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n","OrderId","FoodItem","CustomerName","VendorName","FoodPrice","OrderDate","OrderStatus","Remark");
+			System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n","OrderId","FoodItem","CustomerName","VendorName","Qty","TotalPrice","OrderDate","OrderStatus","Remark");
 			while(resultSet.next()) {
-				System.out.printf("%-10s %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getDouble(5),resultSet.getDate(6),resultSet.getString(7),resultSet.getString(8));
+				System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5),resultSet.getDouble(6),resultSet.getDate(7),resultSet.getString(8),resultSet.getString(9));
 			}
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -552,14 +633,14 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 	public void viewPendingOrders() {
 
 
-		String sql="select  fo.orderid,f.fname,c.cname,v.vname,f.fprice ,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid and fo.orderstatus=?";
+		String sql="select  fo.orderid,f.fname,c.cname,v.vname,fo.quantity,fo.totalamount ,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid and fo.orderstatus=?";
 		try {
 			statement=connection.prepareStatement(sql);
 			statement.setString(1,"pending");
 			resultSet=statement.executeQuery();
-			System.out.printf("%-10s  %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n","OrderId","FoodItem","CustomerName","VendorName","FoodPrice","OrderDate","OrderStatus","Remark");
+			System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n","OrderId","FoodItem","CustomerName","VendorName","Qty","TotalPrice","OrderDate","OrderStatus","Remark");
 			while(resultSet.next()) {
-				System.out.printf("%-10s %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getDouble(5),resultSet.getDate(6),resultSet.getString(7),resultSet.getString(8));
+				System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5),resultSet.getDouble(6),resultSet.getDate(7),resultSet.getString(8),resultSet.getString(9));
 			}
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -594,24 +675,32 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
         Scanner scanner=new Scanner(System.in);
 		System.out.println("Enter the customer id");
 		int cid=scanner.nextInt();
-		String sql="select  fo.orderid,f.fname,c.cname,v.vname,f.fprice ,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid and c.cid=?;";
+		String sql="select  fo.orderid,f.fname,c.cname,v.vname,fo.quantity,fo.totalamount ,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid and c.cid=?";
 		try {
 			statement=connection.prepareStatement(sql);
 			statement.setInt(1,cid);
 			resultSet=statement.executeQuery();
-			System.out.printf("%-10s %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n","OrderId","FoodItem","CustomerName","VendorName","FoodPrice","OrderDate","OrderStatus","Remark");
+			System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n","OrderId","FoodItem","CustomerName","VendorName","Qty","TotalPrice","OrderDate","OrderStatus","Remark");
 			while(resultSet.next()) {
-				System.out.printf("%-10s %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getDouble(5),resultSet.getDate(6),resultSet.getString(7),resultSet.getString(8));
+				System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5),resultSet.getDouble(6),resultSet.getDate(7),resultSet.getString(8),resultSet.getString(9));
 			}
 			scanner.nextLine();
 			System.out.println("Enter the order id");
 			int orderid= scanner.nextInt();
-			sql="delete from foodorder where orderid=?";
-			statement=connection.prepareStatement(sql);
+			statement=connection.prepareStatement("select c.cid from foodorder fo inner join customer c on fo.cid=c.cid where fo.orderid=?");
 			statement.setInt(1,orderid);
-			int n=statement.executeUpdate();
-			if(n>0){
-				System.out.println("The order has been deleted successfully!");
+			resultSet=statement.executeQuery();
+			resultSet.next();
+			if(resultSet.getInt(1)==cid) {
+				sql = "delete from foodorder where orderid=?";
+				statement = connection.prepareStatement(sql);
+				statement.setInt(1, orderid);
+				int n = statement.executeUpdate();
+				if (n > 0) {
+					System.out.println("The order has been deleted successfully!");
+				}
+			}else{
+				System.out.println("You do not have permission to cancel this order");
 			}
 
 
@@ -627,49 +716,54 @@ public class CanteenManagementDAOImpl implements CanteenManagmentDAO{
 		Scanner scanner=new Scanner(System.in);
 		System.out.println("Enter the vendor id");
 		int vid=scanner.nextInt();
-		String sql="select  fo.orderid,f.fname,c.cname,v.vname,f.fprice ,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid and v.vid=? and fo.orderstatus=?";
-		try{
-			statement=connection.prepareStatement(sql);
-			statement.setInt(1,vid);
-			statement.setString(2,"pending");
-			resultSet=statement.executeQuery();
-			System.out.printf("%-10s %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n","OrderId","FoodItem","CustomerName","VendorName","FoodPrice","OrderDate","OrderStatus","Remark");
-			while(resultSet.next()){
-				System.out.printf("%-10s %-20s %-20s %-20s %-20s  %-20s  %-20s  %-20s\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getDouble(5),resultSet.getDate(6),resultSet.getString(7),resultSet.getString(8));
+		String sql="select  fo.orderid,f.fname,c.cname,v.vname,fo.quantity,fo.totalamount,fo.orderdate,fo.orderstatus,fo.remark from  foodorder fo,food f,customer c ,vendor v where fo.fid=f.fid and fo.cid=c.cid and fo.vid=v.vid and v.vid=? and fo.orderstatus=?";
+		try {
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, vid);
+			statement.setString(2, "pending");
+			resultSet = statement.executeQuery();
+			System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n", "OrderId", "FoodItem", "CustomerName", "VendorName", "Qty", "TotalPrice", "OrderDate", "OrderStatus", "Remark");
+			while (resultSet.next()) {
+				System.out.printf("%-10s %-20s %-20s %-20s %-10s %-20s  %-20s  %-20s  %-20s\n", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getInt(5), resultSet.getDouble(6), resultSet.getDate(7), resultSet.getString(8), resultSet.getString(9));
 			}
 			System.out.println("Enter the order id to complete");
 			scanner.nextLine();
-			int orderid=scanner.nextInt();
-			sql="select  c.cid,f.fprice ,c.cwalletbalance from  foodorder fo,food f,customer c  where fo.fid=f.fid and fo.cid=c.cid  and fo.orderid=?";
-			statement=connection.prepareStatement(sql);
-			statement.setInt(1,orderid);
-			resultSet=statement.executeQuery();
+			int orderid = scanner.nextInt();
+			statement = connection.prepareStatement("select v.vid from foodorder fo inner join vendor v on fo.vid=v.vid where fo.orderid=?");
+			statement.setInt(1, orderid);
+			resultSet = statement.executeQuery();
 			resultSet.next();
-			int cid=resultSet.getInt(1);
-			double fprice=resultSet.getDouble(2);
-			double cwalletbalance=resultSet.getDouble(3);
 
-			if(cwalletbalance>=fprice){
-				double diff=cwalletbalance-fprice;
-				sql="update customer set cwalletbalance=? where customer.cid=?";
-				statement=connection.prepareStatement(sql);
-				statement.setDouble(1,diff);
-				statement.setInt(2,cid);
-				int n=statement.executeUpdate();
-				sql="update foodorder set orderstatus=? where orderid=?";
-				statement=connection.prepareStatement(sql);
-				statement.setString(1,"completed");
-				statement.setInt(2,orderid);
-				int n2=statement.executeUpdate();
-				if(n>0 && n2>0){
-					System.out.println("Order processed successfully!");
-				}
-
-
+			if(resultSet.getInt(1)==vid){
+			sql = "select  c.cid,fo.totalamount ,c.cwalletbalance from  foodorder fo,food f,customer c  where fo.fid=f.fid and fo.cid=c.cid  and fo.orderid=?";
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, orderid);
+			resultSet = statement.executeQuery();
+			resultSet.next();
+			int cid = resultSet.getInt(1);
+			double totalamount = resultSet.getDouble(2);
+			double cwalletbalance = resultSet.getDouble(3);
+			double diff = cwalletbalance - totalamount;
+			sql = "update customer set cwalletbalance=? where customer.cid=?";
+			statement = connection.prepareStatement(sql);
+			statement.setDouble(1, diff);
+			statement.setInt(2, cid);
+			int n = statement.executeUpdate();
+			sql = "update foodorder set orderstatus=? where orderid=?";
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, "completed");
+			statement.setInt(2, orderid);
+			int n2 = statement.executeUpdate();
+			if (n > 0 && n2 > 0) {
+				System.out.println("Order processed successfully!");
 			}else{
-
-				System.out.println("The order cannot be processed due to low wallet balance");
+				System.out.println("Order failed");
 			}
+		}
+		else{
+			    System.out.println("You are not allowed to perform this action ");
+		}
+
 
 		}catch (SQLException e){
 			System.out.println(e.getMessage());
